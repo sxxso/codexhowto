@@ -1,0 +1,18 @@
+# GitHub MCP server for Codex CLI
+# Copy this block into ~/.codex/config.toml
+#
+# Lets Codex read and manage issues, pull requests, and repository data
+# through the GitHub API.
+#
+# Create a token at https://github.com/settings/tokens with the scopes you
+# need (repo, read:org, etc.). Prefer a fine-grained token limited to the
+# repositories you actually use.
+#
+# Security tip: instead of pasting the token here, export it in your shell
+# (export GITHUB_PERSONAL_ACCESS_TOKEN=ghp_xxx) so it never lands in a file
+# that might be committed.
+
+[mcp_servers.github]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-github"]
+env = { GITHUB_PERSONAL_ACCESS_TOKEN = "ghp_replace_with_your_token" }

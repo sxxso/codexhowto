@@ -1,0 +1,25 @@
+# Multiple MCP servers for Codex CLI
+# Copy the blocks you need into ~/.codex/config.toml
+#
+# Each [mcp_servers.NAME] table registers one server. The NAME (filesystem,
+# github, metrics) is what you will see when you run /mcp inside the TUI.
+#
+# All three below use the stdio transport: Codex launches `command` with
+# `args` and speaks MCP over the process's stdin/stdout.
+
+# --- Structured filesystem access, scoped to the current directory ---
+[mcp_servers.filesystem]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-filesystem", "."]
+
+# --- GitHub issues and pull requests ---
+[mcp_servers.github]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-github"]
+env = { GITHUB_PERSONAL_ACCESS_TOKEN = "ghp_replace_with_your_token" }
+
+# --- A custom in-house Python MCP server ---
+[mcp_servers.metrics]
+command = "python"
+args = ["-m", "my_company.metrics_mcp"]
+env = { METRICS_API_URL = "https://metrics.internal" }

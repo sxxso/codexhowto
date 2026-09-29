@@ -1,0 +1,55 @@
+# ~/.codex/config.toml
+#
+# Starter configuration for OpenAI Codex CLI.
+# Copy to ~/.codex/config.toml  (Windows: %USERPROFILE%\.codex\config.toml)
+# and edit to taste. Override any key for a single run with:  codex -c key=value
+
+# --- Model ---------------------------------------------------------------
+# The model Codex runs. gpt-5-codex is the coding-tuned default.
+model = "gpt-5-codex"
+
+# Where the model comes from. "openai" is the default provider.
+model_provider = "openai"
+
+# How hard the model thinks: "minimal" | "low" | "medium" | "high".
+# Higher = better on hard problems, slower and more expensive.
+model_reasoning_effort = "medium"
+
+# --- Autonomy ------------------------------------------------------------
+# When Codex must ask before acting:
+#   "untrusted"  - ask for anything not known-safe
+#   "on-failure" - act freely in the sandbox, ask only if a command fails
+#   "on-request" - Codex decides when to ask (good default)
+#   "never"      - never ask (use only with a tight sandbox or in CI)
+approval_policy = "on-request"
+
+# What Codex is allowed to touch:
+#   "read-only"          - read files, no writes, no commands with effects
+#   "workspace-write"    - read/write within the workspace (good default)
+#   "danger-full-access" - no sandbox (dangerous; containers/CI only)
+sandbox_mode = "workspace-write"
+
+# Options that apply when sandbox_mode = "workspace-write".
+[sandbox_workspace_write]
+# Allow the sandbox to reach the network (installs, fetches). Off by default.
+network_access = false
+# Extra directories Codex may write to, beyond the workspace.
+writable_roots = []
+
+# --- Tools ---------------------------------------------------------------
+[tools]
+# Let Codex search the web when it needs current information.
+web_search = true
+
+# --- Profiles ------------------------------------------------------------
+# Named bundles you switch to with:  codex --profile NAME
+# A read-only profile for reviews and audits.
+[profiles.review]
+approval_policy = "on-request"
+sandbox_mode = "read-only"
+
+# A heads-down build profile that interrupts less.
+[profiles.build]
+approval_policy = "on-failure"
+sandbox_mode = "workspace-write"
+model_reasoning_effort = "high"

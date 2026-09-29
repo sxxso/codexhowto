@@ -1,0 +1,14 @@
+# ~/.codex/config.toml  (minimal, safe defaults)
+#
+# The smallest config that pins a model and keeps Codex cautious.
+# Good starting point if you are new to Codex or working in a sensitive repo.
+# Loosen per-run when you need to:  codex -c 'sandbox_mode="workspace-write"'
+
+model = "gpt-5-codex"
+
+# Ask before doing anything not known to be safe.
+approval_policy = "on-request"
+
+# Read and analyze, but do not modify files or run commands with side effects
+# until you explicitly allow it.
+sandbox_mode = "read-only"

@@ -1,0 +1,33 @@
+# Local credentials and agent state
+.env
+.env.*
+!.env.example
+!.env.template
+.codex/
+.claude/
+
+# Python environments and generated files
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local dependency installs
+node_modules/
+
+# Operating-system and editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Lab output (keep source and examples tracked)
+exercises/sample-project/expenses.json
+exercises/sample-project/report.golden.txt
+exercises/sample-project/out.csv
+zh/exercises/sample-project/expenses.json
+zh/exercises/sample-project/report.golden.txt
+zh/exercises/sample-project/out.csv

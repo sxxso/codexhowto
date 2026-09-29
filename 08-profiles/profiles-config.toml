@@ -1,0 +1,76 @@
+# ~/.codex/config.toml — profiles & model providers showcase
+#
+# Copy the parts you need. Activate a profile with `codex --profile NAME`
+# (or `-p NAME`), or set a default with the top-level `profile` key below.
+#
+# Precedence (highest first): CLI -c/flags > active profile > these top-level
+# keys > built-in defaults.
+
+# ----------------------------------------------------------------------------
+# Top-level defaults (used when no profile overrides them)
+# ----------------------------------------------------------------------------
+model = "gpt-5-codex"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+# Make one profile the default for every session. Comment out to use the
+# top-level keys above instead.
+profile = "deep"
+
+# ----------------------------------------------------------------------------
+# Profiles
+# ----------------------------------------------------------------------------
+
+# Quick edits: cheaper/faster model, minimal reasoning.
+[profiles.fast]
+model = "gpt-5"
+model_reasoning_effort = "low"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+# Hard problems: flagship model, maximum reasoning.
+[profiles.deep]
+model = "gpt-5-codex"
+model_reasoning_effort = "high"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+# Code review / analysis only: never let Codex write.
+[profiles.readonly-review]
+model = "gpt-5-codex"
+model_reasoning_effort = "medium"
+approval_policy = "on-request"
+sandbox_mode = "read-only"
+
+# Offline / private: run against a local Ollama model (also pass --oss).
+[profiles.local-oss]
+model_provider = "oss"
+model = "gpt-oss:20b"
+sandbox_mode = "workspace-write"
+
+# ----------------------------------------------------------------------------
+# Custom model providers
+# ----------------------------------------------------------------------------
+
+# An internal OpenAI-compatible gateway. Select with `model_provider = "gateway"`
+# in a profile. The API key is read from the GATEWAY_API_KEY environment variable.
+[model_providers.gateway]
+name = "Internal LLM Gateway"
+base_url = "https://llm.example.com/v1"
+env_key = "GATEWAY_API_KEY"
+wire_api = "chat"
+
+# Azure OpenAI example.
+[model_providers.azure]
+name = "Azure OpenAI"
+base_url = "https://my-resource.openai.azure.com/openai"
+env_key = "AZURE_OPENAI_API_KEY"
+wire_api = "responses"
+query_params = { api-version = "2025-04-01-preview" }
+
+# A profile that routes through the gateway above.
+[profiles.corp]
+model = "gpt-5"
+model_provider = "gateway"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"

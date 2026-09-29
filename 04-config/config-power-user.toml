@@ -1,0 +1,77 @@
+# ~/.codex/config.toml  (power user)
+#
+# Advanced setup: multiple profiles, a custom OpenAI-compatible provider,
+# workspace-write with network access, and a commented MCP server stub.
+# Keep API keys in environment variables, never inline in this file.
+
+# --- Defaults ------------------------------------------------------------
+model = "gpt-5-codex"
+model_provider = "openai"
+model_reasoning_effort = "medium"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+project_doc_max_bytes = 32768
+
+[sandbox_workspace_write]
+# Allow installs and fetches from inside the sandbox.
+network_access = true
+writable_roots = ["/tmp/codex-scratch"]
+
+[tools]
+web_search = true
+
+# --- Custom / OpenAI-compatible provider ---------------------------------
+# Route through a gateway or a self-hosted endpoint. Select it per-profile
+# below, or set model_provider = "gateway" at the top level.
+[model_providers.gateway]
+name = "Internal Gateway"
+base_url = "https://gateway.example.com/v1"
+env_key = "GATEWAY_API_KEY"
+wire_api = "chat"
+
+# A local OSS provider (e.g. an Ollama-compatible server). See module 08.
+[model_providers.local]
+name = "Local OSS"
+base_url = "http://localhost:11434/v1"
+env_key = "LOCAL_API_KEY"
+wire_api = "chat"
+
+# --- Profiles ------------------------------------------------------------
+# Read-only review mode.
+[profiles.review]
+approval_policy = "on-request"
+sandbox_mode = "read-only"
+model_reasoning_effort = "high"
+
+# Fast, low-friction local build loop.
+[profiles.build]
+approval_policy = "on-failure"
+sandbox_mode = "workspace-write"
+
+# Unattended automation (CI, containers). Pairs "never" approvals with a
+# sandbox; only combine with danger-full-access inside a disposable environment.
+[profiles.ci]
+approval_policy = "never"
+sandbox_mode = "workspace-write"
+
+# Route this profile through the internal gateway.
+[profiles.gateway]
+model_provider = "gateway"
+model = "gpt-5"
+
+# Route through a local model with reasoning turned down for speed.
+[profiles.local]
+model_provider = "local"
+model = "llama-3.3-70b"
+model_reasoning_effort = "low"
+
+# --- MCP servers (stub) --------------------------------------------------
+# Uncomment and adapt to give Codex external tools. See module 06 for details.
+# [mcp_servers.filesystem]
+# command = "npx"
+# args = ["-y", "@modelcontextprotocol/server-filesystem", "/path/to/allowed/dir"]
+#
+# [mcp_servers.github]
+# command = "npx"
+# args = ["-y", "@modelcontextprotocol/server-github"]
+# env = { GITHUB_PERSONAL_ACCESS_TOKEN = "${GITHUB_TOKEN}" }

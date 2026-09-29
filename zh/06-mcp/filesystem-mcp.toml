@@ -1,0 +1,14 @@
+# Filesystem MCP server for Codex CLI
+# Copy this block into ~/.codex/config.toml
+#
+# Gives Codex structured, typed filesystem tools (list, read, search)
+# scoped to a specific directory. Replace the path with your project root.
+#
+# The npx command downloads the server on first run, then caches it.
+
+[mcp_servers.filesystem]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-filesystem", "/path/to/your/project"]
+
+# You can scope to multiple roots by adding more path arguments:
+# args = ["-y", "@modelcontextprotocol/server-filesystem", "/path/one", "/path/two"]

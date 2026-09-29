@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+expenses.json
+report.golden.txt
+out.csv

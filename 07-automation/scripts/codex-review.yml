@@ -1,0 +1,73 @@
+# Automated PR review with Codex CLI.
+#
+# Runs `codex exec` on every pull request, reviews the diff against the base
+# branch in a read-only sandbox, prints findings to the job log, and uploads
+# them as an artifact. Add OPENAI_API_KEY as a repository secret first:
+#   Settings -> Secrets and variables -> Actions -> New repository secret
+
+name: Codex Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out PR
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # need history to diff against the base branch
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Codex CLI
+        run: npm install -g @openai/codex
+
+      - name: Run Codex review
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          git fetch --quiet origin "${{ github.base_ref }}"
+          git diff "origin/${{ github.base_ref }}"... > pr.diff
+          if [ ! -s pr.diff ]; then
+            echo "No changes to review." | tee review.md
+            exit 0
+          fi
+          codex exec --sandbox read-only --output-last-message review.md \
+            "Review the following diff. Report only concrete findings grouped by
+             severity (Blocking / Warning / Nit). Be specific with file:line.
+             Diff follows:
+             $(cat pr.diff)"
+          echo "----- Codex review -----"
+          cat review.md
+
+      - name: Upload review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: codex-review
+          path: review.md
+
+      - name: Post review comment
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            if (!fs.existsSync('review.md')) return;
+            const body = '## Codex review\n\n' + fs.readFileSync('review.md', 'utf8');
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });
