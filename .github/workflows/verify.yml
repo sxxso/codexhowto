@@ -1,0 +1,63 @@
+# Repository self-checks.
+#
+# This repo's whole promise is "reproducible and verifiable", so it holds
+# itself to the same bar: the deliberately broken lab must stay broken in
+# exactly the documented way, and every internal link must resolve.
+#
+# This is the repo's OWN CI. It is unrelated to 07-automation/codex-review.yml,
+# which is a teaching template, not a workflow enabled here.
+
+name: Verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lab-baseline:
+    name: Lab baseline stays "2 failed, 3 passed"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        dir:
+          - exercises/sample-project
+          - zh/exercises/sample-project
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install lab dependencies
+        working-directory: ${{ matrix.dir }}
+        run: python -m pip install -r requirements.txt
+      - name: Assert the planted-bug baseline is intact
+        working-directory: ${{ matrix.dir }}
+        run: |
+          set +e
+          out=$(python -m pytest -q --tb=no 2>&1)
+          echo "$out"
+          # The lab ships intentionally broken: exactly 2 failures, 3 passes.
+          # A green run means a planted bug was silently fixed or a test weakened.
+          if echo "$out" | grep -qE '2 failed, 3 passed'; then
+            echo "Baseline intact for ${{ matrix.dir }}."
+          else
+            echo "::error::Lab baseline changed in ${{ matrix.dir }} — expected '2 failed, 3 passed'. A planted bug may have been removed or a test altered."
+            exit 1
+          fi
+
+  links:
+    name: Internal links resolve
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check relative Markdown and HTML links
+        run: python .github/scripts/check_links.py

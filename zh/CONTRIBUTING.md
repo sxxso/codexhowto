@@ -12,7 +12,7 @@
 ## 基本原则
 
 1. **只教 Codex CLI。** 课程内容中不要提及其他编码智能体的名字。
-2. **遵循[风格指南](../STYLE_GUIDE.md)。** 结构、命名、标题、表格和图示必须一致。
+2. **遵循[风格指南](STYLE_GUIDE.md)。** 结构、命名、标题、表格和图示必须一致。
 3. **不含机密。** 绝不提交真实的 API key 或 token。使用 `OPENAI_API_KEY` 和占位符。
 4. **安全默认。** 示范能完成任务的最紧审批策略与沙箱模式。任何 `--dangerously-bypass-approvals-and-sandbox` 示例都要包在 **Warning** 提示块里,并置于容器/CI 语境中。
 5. **不要编造事实。** 不要添加你无法核实的 Codex 版本号、flag 或配置键。不确定时就描述行为、不做版本断言。
@@ -38,7 +38,7 @@ codexhowto/
 
 ## 新增模块页面
 
-1. 按[课程结构](../STYLE_GUIDE.md)编写模块 `README.md`。
+1. 按[课程结构](STYLE_GUIDE.md)编写模块 `README.md`。
 2. 在模块文件夹中加入可复制粘贴的模板。
 3. 更新根 `README.md`、`INDEX.md`、`CATALOG.md` 和 `LEARNING-ROADMAP.md`。
 4. 在 `zh/` 下同步该变更。

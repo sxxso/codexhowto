@@ -4,6 +4,18 @@ All notable changes to codexhowto are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.2.0] - 2026-09-29
+
+### Added
+
+- **Verify workflow** (`.github/workflows/verify.yml`) — CI that runs on every push and pull request:
+  - Asserts the hands-on lab keeps its intended `2 failed, 3 passed` baseline in both the EN and `zh/` sample projects, so a silently "fixed" planted bug fails the build.
+  - Runs a relative-link checker (`.github/scripts/check_links.py`) across every Markdown file.
+- **Verify status badge** and a "How this repo is verified" table in `README.md` (EN + `zh/`), stating plainly what is automated and that Codex CLI commands are not certified against a specific release.
+- **"What a real session looks like"** — an abbreviated, representative `codex` transcript for Exercise 3 in the lab `README.md` (EN + `zh/`).
+- **GitHub templates** — issue templates (broken command, content fix, new content) and a pull request template aligned with `CONTRIBUTING.md` and `STYLE_GUIDE.md`.
+- **Chinese mirrors** of the remaining top-level docs: `zh/CHANGELOG.md`, `zh/CODE_OF_CONDUCT.md`, `zh/SECURITY.md`, `zh/STYLE_GUIDE.md`.
+
 ## [1.1.0] - 2026-09-29
 
 ### Added

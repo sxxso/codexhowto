@@ -186,6 +186,56 @@ for it. Keep the existing CLI behaviour unchanged."
 
 ---
 
+## 真实会话长什么样
+
+读命令和看它真正跑起来是两回事。下面是**练习 3** 的一段节选、示意性会话——你的
+具体措辞、diff 和耗时都会不同,而且 Codex 在写入前可能会先征求同意。
+
+```text
+$ codex -a on-request -s workspace-write "pytest shows two failing tests in \
+test_expenses.py. Read them to understand the intended behaviour, then fix \
+expenses.py so they pass. Do not modify the test file. Run pytest to confirm."
+
+• Reading test_expenses.py
+  - test_total_rounds_to_cents expects 0.1 + 0.2 to total 0.30, not
+    0.30000000000000004
+  - test_filter_by_category_is_case_insensitive expects "Food" and "food"
+    to be counted together
+
+• Reading expenses.py
+  - total() returns sum(...) without rounding
+  - filter_by_category() compares categories with a case-sensitive ==
+
+  Proposed change to expenses.py:
+    - return sum(e["amount"] for e in expenses)
+    + return round(sum(e["amount"] for e in expenses), 2)
+    ...
+    - return [e for e in expenses if e["category"] == category]
+    + target = category.lower()
+    + return [e for e in expenses if e["category"].lower() == target]
+
+  Apply this change? [y/N] y
+
+• Running: pytest -q
+  5 passed in 0.03s
+
+I fixed two bugs in expenses.py without touching the tests: rounding in
+total(), and case-insensitive matching in filter_by_category(). All tests pass.
+```
+
+**接下来轮到你验证——别轻信它的总结:**
+
+```bash
+pytest -q                                    # 确认:5 passed
+git diff                                      # 确认只改了 expenses.py
+python expenses.py total --category food      # 上面注释里提到的相关 bug
+```
+
+这段会话示范的习惯,才是重点:Codex 给出一个具体、可审阅的 diff,你批准它,然后
+**由你**重新跑一遍检查,而不是轻信「所有测试通过」。
+
+---
+
 ## 下一步去哪
 
 - 卡住了,或想对比不同做法?见 [SOLUTIONS.md](SOLUTIONS.md)。

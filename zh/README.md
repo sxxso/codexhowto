@@ -10,6 +10,7 @@
   <a href="#课程目录"><img src="https://img.shields.io/badge/modules-13-2563eb" alt="13 个教程模块"></a>
   <a href="exercises/README.md"><img src="https://img.shields.io/badge/lab-exercises%20%C3%97%206-7c3aed" alt="6 个实战练习"></a>
   <a href="../README.md"><img src="https://img.shields.io/badge/languages-English%20%2F%20%E4%B8%AD%E6%96%87-0891b2" alt="英文与简体中文"></a>
+  <a href="https://github.com/sxxso/codexhowto/actions/workflows/verify.yml"><img src="https://github.com/sxxso/codexhowto/actions/workflows/verify.yml/badge.svg" alt="Verify 工作流状态"></a>
 </p>
 
 <p align="center">
@@ -298,9 +299,22 @@ codexhowto/
 
 **验证边界：**Python 实验有一组已知、故意失败的初始测试。本项目不声称所有 Codex 命令、模型提供方、MCP server 或 CI 模板都已在最新版 CLI 上完成端到端测试，也不承诺固定的默认模型或全面的提供方兼容性。
 
+### 本仓库如何验证
+
+每次 push 和 pull request 都会运行 [Verify 工作流](../.github/workflows/verify.yml)，让能自动核查的部分保持诚实：
+
+| 检查项 | 怎么查 | 状态 |
+|---|---|---|
+| **实验基线** | CI 跑示例项目(英文与 `zh/`),断言输出正好是 `2 failed, 3 passed`——一旦变绿,说明有埋的 bug 被悄悄修掉了 | 自动 |
+| **内部链接** | CI 解析全仓库每一个相对 Markdown/HTML 链接 | 自动 |
+| **实验运行环境** | Python 3.10+ 与 `pytest`(见各自的 `requirements.txt`) | 自动 |
+| **Codex CLI 命令** | 尽量写成与版本无关;**未**针对任何特定 CLI 版本做认证 | 手动——运行 `codex --version`,记录你实测的版本 |
+
+最后一行是所有 CLI 教程都逃不掉的诚实告示:工具在变。当你验证某个命令时,请在 PR 或 issue 里注明版本,好让别人知道它是在哪个版本上测过的。
+
 部分课程使用 heredoc、`diff` 等 Bash 专用写法。在 Windows 上，请使用兼容的 Bash 环境，或将相应命令改写为 PowerShell；不要直接将 Bash 语法粘贴到 PowerShell。
 
-项目安全指南见 [SECURITY.md](../SECURITY.md)。
+项目安全指南见 [SECURITY.md](SECURITY.md)。
 
 ## 常见问题
 
@@ -356,7 +370,7 @@ codexhowto/
 - 保持中英文指南同步。
 - 改进图解、可访问性和失效链接。
 
-请先阅读[贡献指南](CONTRIBUTING.md)，遵循[风格规范](../STYLE_GUIDE.md)和[行为准则](../CODE_OF_CONDUCT.md)。报告问题时，请提供模块位置、脱敏的命令或错误、CLI 版本、操作系统和预期结果；不要提交 token、个人数据或专有代码。
+请先阅读[贡献指南](CONTRIBUTING.md)，遵循[风格规范](STYLE_GUIDE.md)和[行为准则](CODE_OF_CONDUCT.md)。报告问题时，请提供模块位置、脱敏的命令或错误、CLI 版本、操作系统和预期结果；不要提交 token、个人数据或专有代码。
 
 ## 许可与致谢
 
@@ -364,7 +378,7 @@ codexhowto/
 
 围绕开源的 [OpenAI Codex CLI](https://github.com/openai/codex)编写。编号式、双语教程的组织方式借鉴了已有编码智能体教程；本仓库的实践内容聚焦 Codex 任务及独立验证结果。
 
-**延伸阅读：**[Codex 官方文档](https://developers.openai.com/codex/) · [更新记录](../CHANGELOG.md) · [English edition](../README.md)。
+**延伸阅读：**[Codex 官方文档](https://developers.openai.com/codex/) · [更新记录](CHANGELOG.md) · [English edition](../README.md)。
 
 ---
 

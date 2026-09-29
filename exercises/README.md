@@ -189,6 +189,58 @@ for it. Keep the existing CLI behaviour unchanged."
 
 ---
 
+## What a real session looks like
+
+Reading the commands is not the same as watching one run. Here is an
+abbreviated, representative session for **Exercise 3** — your exact wording,
+diff, and timing will differ, and Codex may ask before it writes.
+
+```text
+$ codex -a on-request -s workspace-write "pytest shows two failing tests in \
+test_expenses.py. Read them to understand the intended behaviour, then fix \
+expenses.py so they pass. Do not modify the test file. Run pytest to confirm."
+
+• Reading test_expenses.py
+  - test_total_rounds_to_cents expects 0.1 + 0.2 to total 0.30, not
+    0.30000000000000004
+  - test_filter_by_category_is_case_insensitive expects "Food" and "food"
+    to be counted together
+
+• Reading expenses.py
+  - total() returns sum(...) without rounding
+  - filter_by_category() compares categories with a case-sensitive ==
+
+  Proposed change to expenses.py:
+    - return sum(e["amount"] for e in expenses)
+    + return round(sum(e["amount"] for e in expenses), 2)
+    ...
+    - return [e for e in expenses if e["category"] == category]
+    + target = category.lower()
+    + return [e for e in expenses if e["category"].lower() == target]
+
+  Apply this change? [y/N] y
+
+• Running: pytest -q
+  5 passed in 0.03s
+
+I fixed two bugs in expenses.py without touching the tests: rounding in
+total(), and case-insensitive matching in filter_by_category(). All tests pass.
+```
+
+**Now you verify — don't take the summary on trust:**
+
+```bash
+pytest -q                                    # confirm: 5 passed
+git diff                                      # confirm only expenses.py changed
+python expenses.py total --category food      # the related bug from the note above
+```
+
+The habit the transcript models is the whole point: Codex proposed a concrete,
+reviewable diff, you approved it, and then **you** re-ran the check instead of
+trusting "all tests pass."
+
+---
+
 ## Where to go next
 
 - Stuck or want to compare approaches? See [SOLUTIONS.md](SOLUTIONS.md).

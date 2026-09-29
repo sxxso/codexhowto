@@ -10,6 +10,7 @@
   <a href="#curriculum"><img src="https://img.shields.io/badge/modules-13-2563eb" alt="13 tutorial modules"></a>
   <a href="exercises/README.md"><img src="https://img.shields.io/badge/lab-exercises%20%C3%97%206-7c3aed" alt="6 lab exercises"></a>
   <a href="zh/README.md"><img src="https://img.shields.io/badge/languages-English%20%2F%20%E4%B8%AD%E6%96%87-0891b2" alt="English and Simplified Chinese"></a>
+  <a href="https://github.com/sxxso/codexhowto/actions/workflows/verify.yml"><img src="https://github.com/sxxso/codexhowto/actions/workflows/verify.yml/badge.svg" alt="Verify workflow status"></a>
 </p>
 
 <p align="center">
@@ -295,6 +296,19 @@ English and Chinese guides share the same directory organization. Commands, conf
 | **Check your version** | Consult `codex --version`, `codex --help`, and `codex exec --help`. Model names and supported settings are version- and account-dependent. |
 
 **Validation boundary:** the included Python lab has a known, deliberately failing baseline. This project does not claim that every Codex command, provider, MCP server, or CI template has been end-to-end tested against the latest CLI. No fixed default model or blanket provider compatibility is promised.
+
+### How this repo is verified
+
+Every push and pull request runs the [Verify workflow](.github/workflows/verify.yml), so the parts that *can* be checked automatically stay honest:
+
+| What | How it's checked | Status |
+|---|---|---|
+| **Lab baseline** | CI runs the sample project (EN and `zh/`) and asserts exactly `2 failed, 3 passed` — a green run means a planted bug was silently fixed | Automated |
+| **Internal links** | CI resolves every relative Markdown/HTML link across the repo | Automated |
+| **Lab runtime** | Python 3.10+ with `pytest` (see each `requirements.txt`) | Automated |
+| **Codex CLI commands** | Written to be version-agnostic; **not** certified against any specific CLI release | Manual — run `codex --version` and record the version you tested against |
+
+The last row is the honest caveat of any CLI tutorial: the tool moves. When you verify a command, note the version in your PR or issue so others know what it was tested on.
 
 Some lesson examples use Bash-specific constructs such as heredocs and `diff`. On Windows, use a compatible Bash environment for those examples or translate them into PowerShell; do not paste Bash syntax directly into PowerShell.
 
